@@ -19,77 +19,181 @@ Ein ToDo Eintrag besteht aus den folgenden Feldern:
 
 ## Installation des Swagger Editors
 
-Es gibt zwei Möglichkeiten, den Swagger Editor lokal zu installieren:
+Absolut! Hier ist eine detaillierte Anleitung, wie Sie Swagger Editor lokal mit NPM installieren und mit `npx` verwenden, um einen lokalen Webserver unter verschiedenen Betriebssystemen (einschließlich PowerShell) zu starten. Wir gehen auch auf die Portkonfiguration und die Anpassung des Skript-Pfads (URL) ein.
 
-### Docker
+**Wichtiger Hinweis zur Version:** Die Readme erwähnt zwei Hauptversionen von Swagger Editor: SwaggerEditor@4 (Legacy) und SwaggerEditor@5 (unterstützt OpenAPI 3.1.0). Diese Anleitung konzentriert sich auf die Verwendung von `swagger-editor-dist`, da es abhängigkeitsfrei ist und sich gut für die lokale Ausführung mit `npx` eignet. Die Readme gibt an, dass `swagger-editor-dist` alles Notwendige enthält, um Swagger Editor in einem serverseitigen Projekt oder einem Webprojekt zu bedienen, das npm-Modulabhängigkeiten nicht auflösen kann.
 
-1.  **Linux / Mac:**
+**Voraussetzungen:**
 
-    Öffnen Sie ein Terminal und führen Sie den folgenden Befehl aus:
+* **Node.js und npm:** Sie benötigen Node.js (Version >=20.3.0) und npm (Node Package Manager, Version >=9.6.7). Npm wird zusammen mit Node.js installiert.
+    * **Download:** [https://nodejs.org/](https://nodejs.org/)
+    * **Überprüfung der Installation:**
+        * Öffnen Sie Ihr Terminal oder Ihre Eingabeaufforderung.
+        * Geben Sie `node -v` ein und drücken Sie Enter.
+        * Geben Sie `npm -v` ein und drücken Sie Enter.
+        Beide Befehle sollten die installierten Versionen anzeigen.
+
+**Schritt-für-Schritt-Anleitung:**
+
+**1. Öffnen des Terminals/der Eingabeaufforderung/PowerShell**
+
+* **Windows:**
+    * **Eingabeaufforderung (CMD):** Drücken Sie `Win + R`, geben Sie `cmd` ein und drücken Sie Enter.
+    * **PowerShell:** Drücken Sie `Win + R`, geben Sie `powershell` ein und drücken Sie Enter.
+* **macOS:**
+    * Öffnen Sie den Finder, gehen Sie zu "Programme" > "Dienstprogramme" und doppelklicken Sie auf "Terminal".
+    * Alternativ können Sie Spotlight (Cmd + Leertaste) verwenden, "Terminal" eingeben und Enter drücken.
+* **Linux:**
+    * Die Methode zum Öffnen eines Terminals variiert je nach Linux-Distribution und Desktop-Umgebung. Üblicherweise finden Sie es im Anwendungsmenü unter "Systemwerkzeuge" oder "Zubehör" oder durch Drücken von `Ctrl + Alt + T`.
+
+**2. Erstellen eines Projektverzeichnisses (Optional, aber empfohlen)**
+
+Es ist eine gute Praxis, für jedes Projekt ein eigenes Verzeichnis anzulegen.
+
+```bash
+mkdir mein-swagger-projekt
+cd mein-swagger-projekt
+```
+
+Ersetzen Sie `mein-swagger-projekt` durch Ihren gewünschten Verzeichnisnamen.
+
+**3. Installieren von `swagger-editor-dist`**
+
+Wir installieren `swagger-editor-dist` lokal in unserem Projektverzeichnis. Dies ist der empfohlene Weg, wenn Sie `npx` verwenden möchten, um es auszuführen.
+
+```bash
+npm install swagger-editor-dist
+```
+
+Dieser Befehl lädt `swagger-editor-dist` herunter und legt es in einem `node_modules`-Ordner in Ihrem aktuellen Verzeichnis ab.
+
+**4. Installieren eines einfachen HTTP-Servers (optional, aber nützlich für `npx`)**
+
+Um die statischen Dateien von `swagger-editor-dist` einfach über `npx` bereitzustellen, können wir einen einfachen HTTP-Server wie `http-server` verwenden. Wenn Sie diesen nicht global installieren möchten, können Sie ihn auch jedes Mal mit `npx` direkt ausführen. Für die Portkonfiguration und das Angeben des Verzeichnisses ist die Installation (global oder lokal als devDependency) manchmal einfacher in der Handhabung.
+
+* **Option A: `http-server` global installieren (einmalig):**
+    ```bash
+    npm install -g http-server
+    ```
+* **Option B: `http-server` als Entwicklungsabhängigkeit im Projekt installieren:**
+    ```bash
+    npm install --save-dev http-server
+    ```
+    Wenn Sie es so installieren, müssen Sie `npx http-server` verwenden, um es auszuführen.
+
+**5. Starten des Swagger Editors mit `npx`**
+
+`npx` ist ein Werkzeug, das mit npm (ab Version 5.2+) geliefert wird und es Ihnen ermöglicht, Node.js-Pakete auszuführen, ohne sie global oder lokal explizit installieren zu müssen (oder lokal installierte Pakete einfach aufzurufen).
+
+Der `swagger-editor-dist` enthält die notwendigen Dateien, um den Editor im Browser anzuzeigen. Wir müssen einen Webserver starten, der auf das Verzeichnis zeigt, in dem sich die `index.html` von `swagger-editor-dist` befindet. Dieses Verzeichnis ist `node_modules/swagger-editor-dist/`.
+
+* **Befehl zum Starten (wenn `http-server` global installiert ist oder als devDependency im Projekt):**
+    ```bash
+    http-server ./node_modules/swagger-editor-dist/
+    ```
+    Oder wenn Sie `http-server` nicht installiert haben und es direkt mit `npx` ausführen möchten:
+    ```bash
+    npx http-server ./node_modules/swagger-editor-dist/
+    ```
+
+Nachdem Sie diesen Befehl ausgeführt haben, sehen Sie in der Konsolenausgabe, auf welcher Adresse und welchem Port der Server läuft (standardmäßig oft `http://localhost:8080` oder `http://127.0.0.1:8080`). Öffnen Sie diese Adresse in Ihrem Webbrowser.
+
+**PowerShell-spezifischer Hinweis:** Die obigen `npm` und `npx` Befehle funktionieren identisch in PowerShell. Achten Sie lediglich darauf, dass PowerShell im richtigen Verzeichnis ausgeführt wird (verwenden Sie `cd` zum Navigieren).
+
+**6. Konfigurieren des Ports**
+
+Viele HTTP-Server, einschließlich `http-server`, ermöglichen die Konfiguration des Ports über einen Kommandozeilenparameter.
+
+* **Mit `http-server`:**
+    Verwenden Sie die Option `-p` gefolgt von der gewünschten Portnummer. Zum Beispiel, um den Server auf Port `8888` zu starten:
 
     ```bash
-    docker pull swaggerapi/swagger-editor
-    docker run -d -p 80:8080 swaggerapi/swagger-editor
+    # Wenn http-server global oder als devDependency installiert ist
+    http-server ./node_modules/swagger-editor-dist/ -p 8888
+
+    # Oder direkt mit npx
+    npx http-server ./node_modules/swagger-editor-dist/ -p 8888
     ```
+    Der Editor ist dann unter `http://localhost:8888` erreichbar.
 
-    Öffnen Sie dann Ihren Webbrowser und navigieren Sie zu `http://localhost`.
+**7. Anpassen des Skript-Pfads (URL der API-Definition)**
 
-2.  **CMD (Windows):**
+Swagger Editor kann beim Start eine API-Definition von einer URL laden. Die Readme beschreibt dies primär im Kontext des Docker-Images (`-e URL="..."`).
 
-    Öffnen Sie die Eingabeaufforderung und führen Sie die folgenden Befehle aus:
+Wenn Sie `swagger-editor-dist` lokal mit einem einfachen HTTP-Server wie `http-server` ausführen, gibt es mehrere Ansätze, um eine Standard-URL für Ihre API-Definition festzulegen oder eine Definition zu laden:
 
-    ```cmd
-    docker pull swaggerapi/swagger-editor
-    docker run -d -p 80:8080 swaggerapi/swagger-editor
+* **Manuelles Importieren:**
+    Der einfachste Weg ist, den Editor zu starten und dann Ihre OpenAPI-Datei (JSON oder YAML) über das Menü "File" > "Import File" oder "File" > "Import URL" zu laden.
+
+* **Query-Parameter `url`:**
+    Viele Swagger-UI/Editor-Installationen (einschließlich der online gehosteten Version) unterstützen einen `url` Query-Parameter in der Adresszeile des Browsers. Nachdem Sie Ihren lokalen Server gestartet haben (z.B. auf `http://localhost:8080`), können Sie versuchen, eine URL zu Ihrer API-Definition anzuhängen:
+
     ```
-
-    Öffnen Sie dann Ihren Webbrowser und navigieren Sie zu `http://localhost`.
-
-3.  **PowerShell (Windows):**
-
-    Öffnen Sie PowerShell und führen Sie die folgenden Befehle aus:
-
-    ```powershell
-    docker pull swaggerapi/swagger-editor
-    docker run -d -p 80:8080 swaggerapi/swagger-editor
+    http://localhost:8080/?url=https://petstore3.swagger.io/api/v3/openapi.json
     ```
+    Oder wenn Ihre Datei lokal über einen anderen Webserver erreichbar ist (oder Sie sie im `swagger-editor-dist` Verzeichnis platzieren und relativ verlinken):
+    ```
+    http://localhost:8080/?url=/pfad/zu/deiner/api.yaml
+    ```
+    **Wichtig:** Damit dies mit lokalen Dateien funktioniert, die Sie neben `index.html` ablegen, muss die Datei über den Webserver erreichbar sein. Legen Sie Ihre `openapi.yaml` z.B. in das Verzeichnis `node_modules/swagger-editor-dist/` und verweisen Sie dann mit `http://localhost:8080/?url=openapi.yaml`.
 
-    Öffnen Sie dann Ihren Webbrowser und navigieren Sie zu `http://localhost`.
+* **Bearbeiten der `index.html` (Fortgeschritten):**
+    Sie könnten die `index.html` Datei innerhalb von `node_modules/swagger-editor-dist/` bearbeiten, um die Standard-URL direkt im SwaggerUIBundle-Aufruf zu ändern. Dies ist jedoch **nicht ideal**, da Ihre Änderungen bei einem Update von `swagger-editor-dist` überschrieben werden.
+    Suchen Sie in der `index.html` (oder den zugehörigen JavaScript-Dateien) nach der Initialisierung von `SwaggerUIBundle`. Dort gibt es oft eine `spec` oder `url` Option:
 
-### npm
+    ```javascript
+    // Beispielhafter Code-Ausschnitt (kann je nach Version variieren)
+    const ui = SwaggerUIBundle({
+      // url: "https://petstore.swagger.io/v2/swagger.json", // Ändern Sie diese Zeile
+      url: "deine-lokale-api-definition.yaml", // Oder ein anderer Pfad/URL
+      dom_id: '#swagger-editor',
+      layout: "EditorLayout",
+      presets: [
+        SwaggerUIBundle.presets.apis,
+        SwaggerUIStandalonePreset
+      ],
+      // ... andere Optionen
+    })
+    ```
+    **Vorsicht:** Diese Methode ist fehleranfällig und nicht update-sicher. Wenn Sie eine dauerhafte Lösung benötigen, ist es besser, eine eigene HTML-Seite zu erstellen, die `swagger-editor-dist` einbindet und konfiguriert, anstatt die Dateien im `node_modules`-Verzeichnis direkt zu ändern.
 
-1.  **Linux / Mac:**
-
-    Öffnen Sie ein Terminal und führen Sie die folgenden Befehle aus:
-
+* **Verwendung der Docker-Methode (wie in der Readme beschrieben):**
+    Wenn Sie Docker verwenden, ist die Konfiguration der Standard-URL sehr einfach über Umgebungsvariablen:
     ```bash
-    npm install -g swagger-editor
-    swagger-editor
+    docker run -d -p 80:8080 -e URL="https://deine-api-url/openapi.json" docker.swagger.io/swaggerapi/swagger-editor
     ```
-
-    Öffnen Sie dann Ihren Webbrowser und navigieren Sie zu `http://localhost:8080`.
-
-2.  **CMD (Windows):**
-
-    Öffnen Sie die Eingabeaufforderung und führen Sie die folgenden Befehle aus:
-
-    ```cmd
-    npm install -g swagger-editor
-    swagger-editor
+    Oder mit einer lokalen Datei:
+    ```bash
+    # Stellen Sie sicher, dass Ihre swagger.json im aktuellen Verzeichnis (pwd) liegt
+    docker run -d -p 80:8080 -v $(pwd):/tmp -e SWAGGER_FILE=/tmp/swagger.json docker.swagger.io/swaggerapi/swagger-editor
     ```
-
-    Öffnen Sie dann Ihren Webbrowser und navigieren Sie zu `http://localhost:8080`.
-
-3.  **PowerShell (Windows):**
-
-    Öffnen Sie PowerShell und führen Sie die folgenden Befehle aus:
-
+    Für Windows PowerShell wäre der `-v` Befehl leicht anders (achten Sie auf die Pfadangabe):
     ```powershell
-    npm install -g swagger-editor
-    swagger-editor
+    docker run -d -p 80:8080 -v "${PWD}:/tmp" -e SWAGGER_FILE=/tmp/swagger.json docker.swagger.io/swaggerapi/swagger-editor
     ```
 
-    Öffnen Sie dann Ihren Webbrowser und navigieren Sie zu `http://localhost:8080`.
+**Zusammenfassung der Befehle (angenommen, Sie sind im Projektverzeichnis):**
+
+1.  **Installation (einmalig pro Projekt):**
+    ```bash
+    npm install swagger-editor-dist http-server
+    ```
+    (oder `npm install -g http-server` für globale Installation von http-server)
+
+2.  **Starten des Editors auf Standardport (oft 8080):**
+    ```bash
+    npx http-server ./node_modules/swagger-editor-dist/
+    ```
+
+3.  **Starten des Editors auf einem spezifischen Port (z.B. 8888):**
+    ```bash
+    npx http-server ./node_modules/swagger-editor-dist/ -p 8888
+    ```
+
+4.  **Laden einer API-Definition über URL-Parameter (im Browser):**
+    `http://localhost:PORT/?url=IHRE_API_DEFINITION_URL`
+
+Diese Anleitung sollte Ihnen helfen, Swagger Editor erfolgreich lokal für Ihre API-Entwicklung einzurichten und zu nutzen.
 
 ## Ziel der OpenAPI Spezifikation
 
@@ -299,6 +403,7 @@ paths:
       responses:
         '204':
           description: No Content
+```
 
 ## HTTP Error Codes
 
@@ -392,102 +497,264 @@ paths:
 ```
 ## Installation von Swagger UI
 
-Swagger UI kann auf zwei Arten installiert werden: Docker und npm.
+Absolut! Hier ist eine umfassende Anleitung zur lokalen Installation und Verwendung von Swagger UI mit NPM/NPX und Docker auf verschiedenen Betriebssystemen, einschließlich PowerShell-spezifischer Hinweise, wo relevant.
 
-### Docker
+## Anleitung: Swagger UI lokal einrichten
 
-Docker ist eine Containerisierungsplattform, die es ermöglicht, Anwendungen in isolierten Umgebungen auszuführen. Dies ist die empfohlene Methode, um Swagger UI zu installieren, da sie einfach und plattformunabhängig ist.
+Swagger UI ermöglicht es Ihnen, Ihre OpenAPI-Spezifikationen (früher Swagger-Spezifikationen) interaktiv zu visualisieren und zu testen. Hier sind zwei gängige Methoden, um Swagger UI lokal zu betreiben:
 
-1.  **Linux / Mac:**
+**Voraussetzungen:**
 
-    Öffnen Sie ein Terminal und führen Sie den folgenden Befehl aus:
+1.  **Node.js und NPM:**
+    * Stellen Sie sicher, dass Node.js und NPM (Node Package Manager) installiert sind. Sie können dies überprüfen, indem Sie `node -v` und `npm -v` in Ihrer Kommandozeile/Terminal ausführen.
+    * Download: [https://nodejs.org/](https://nodejs.org/)
+2.  **Docker (für die Docker-Methode):**
+    * Installieren Sie Docker Desktop (für Windows/macOS) oder Docker Engine (für Linux).
+    * Download: [https://www.docker.com/products/docker-desktop/](https://www.docker.com/products/docker-desktop/)
 
+---
+
+### Methode 1: Verwendung von NPM und NPX
+
+Diese Methode verwendet `swagger-ui-dist`, ein NPM-Paket, das alle notwendigen statischen Dateien enthält, um Swagger UI ohne weitere Abhängigkeiten auszuführen. Wir verwenden dann `npx` mit `http-server`, um diese Dateien lokal bereitzustellen.
+
+**Schritt 1: Projektordner erstellen und `swagger-ui-dist` installieren**
+
+1.  Öffnen Sie Ihr Terminal oder Ihre PowerShell.
+    * **Linux/macOS:** Terminal
+    * **Windows:** Eingabeaufforderung (cmd) oder PowerShell
+
+2.  Erstellen Sie einen neuen Ordner für Ihr Swagger UI-Projekt und wechseln Sie in diesen Ordner:
     ```bash
-    docker pull swaggerapi/swagger-ui
-    docker run -d -p 8080:8080 swaggerapi/swagger-ui
+    mkdir meine-swagger-ui
+    cd meine-swagger-ui
     ```
+    In PowerShell wären die Befehle identisch.
 
-    Öffnen Sie dann Ihren Webbrowser und navigieren Sie zu `http://localhost:8080`.
-
-2.  **CMD (Windows):**
-
-    Öffnen Sie die Eingabeaufforderung und führen Sie die folgenden Befehle aus:
-
-    ```cmd
-    docker pull swaggerapi/swagger-ui
-    docker run -d -p 8080:8080 swaggerapi/swagger-ui
-    ```
-
-    Öffnen Sie dann Ihren Webbrowser und navigieren Sie zu `http://localhost:8080`.
-
-3.  **PowerShell (Windows):**
-
-    Öffnen Sie PowerShell und führen Sie die folgenden Befehle aus:
-
-    ```powershell
-    docker pull swaggerapi/swagger-ui
-    docker run -d -p 8080:8080 swaggerapi/swagger-ui
-    ```
-
-    Öffnen Sie dann Ihren Webbrowser und navigieren Sie zu `http://localhost:8080`.
-
-### npm
-
-npm ist ein Paketmanager für JavaScript, der es ermöglicht, JavaScript-Bibliotheken und -Tools zu installieren.
-
-1.  **Linux / Mac:**
-
-    Öffnen Sie ein Terminal und führen Sie die folgenden Befehle aus:
-
+3.  Installieren Sie `swagger-ui-dist` lokal in diesem Projekt:
     ```bash
-    npm install -g swagger-ui-dist
+    npm install swagger-ui-dist
     ```
+    Dadurch wird ein `node_modules`-Ordner erstellt, der `swagger-ui-dist` enthält. Die relevanten Dateien befinden sich in `node_modules/swagger-ui-dist/`.
 
-    Erstellen Sie ein Verzeichnis, in dem Sie Ihre OpenAPI-Spezifikationsdatei (`openapi.yaml`) speichern möchten. Navigieren Sie zu diesem Verzeichnis im Terminal.
+**Schritt 2: Swagger UI-Dateien vorbereiten**
 
-    Führen Sie dann den folgenden Befehl aus:
+Die `swagger-ui-dist` liefert eine `index.html`, die Sie direkt verwenden oder anpassen können.
 
+1.  Kopieren Sie die benötigten Dateien aus `node_modules/swagger-ui-dist` in Ihr Hauptprojektverzeichnis (z.B. `meine-swagger-ui`). Dies ist nicht zwingend notwendig, macht aber die Handhabung einfacher, insbesondere wenn Sie die `index.html` anpassen möchten.
+    * **Linux/macOS:**
+        ```bash
+        cp node_modules/swagger-ui-dist/* .
+        # Wenn der obige Befehl aufgrund von Wildcard-Problemen nicht alle Dateien kopiert:
+        # cp node_modules/swagger-ui-dist/index.html .
+        # cp node_modules/swagger-ui-dist/swagger-ui.css .
+        # cp node_modules/swagger-ui-dist/swagger-ui-bundle.js .
+        # cp node_modules/swagger-ui-dist/swagger-ui-standalone-preset.js .
+        # cp node_modules/swagger-ui-dist/favicon-*.png . # etc.
+        # Einfacher ist oft, den gesamten Inhalt zu kopieren:
+        # cp -R node_modules/swagger-ui-dist/* .
+        ```
+    * **Windows (Eingabeaufforderung):**
+        ```cmd
+        xcopy node_modules\swagger-ui-dist\* . /E /I /Y
+        ```
+    * **Windows (PowerShell):**
+        ```powershell
+        Copy-Item -Path node_modules\swagger-ui-dist\* -Destination . -Recurse -Force
+        ```
+    Wenn Sie die Dateien nicht kopieren, müssen Sie später den Pfad für `npx http-server` entsprechend anpassen (`node_modules/swagger-ui-dist`).
+
+**Schritt 3: OpenAPI-Spezifikationsdatei bereitstellen**
+
+Swagger UI benötigt eine OpenAPI-Spezifikationsdatei (z.B. `openapi.json` oder `openapi.yaml`).
+
+1.  Platzieren Sie Ihre Spezifikationsdatei (z.B. `meine-api.yaml`) im selben Verzeichnis (hier: `meine-swagger-ui`).
+2.  **Optional:** Wenn Sie möchten, dass Swagger UI standardmäßig Ihre lokale Datei lädt, müssen Sie die `swagger-initializer.js` (die Sie in Schritt 2 kopiert haben) anpassen. Öffnen Sie die `swagger-initializer.js` in einem Texteditor:
+    Suchen Sie nach dem `SwaggerUIBundle`-Konfigurationsblock. Er sieht ungefähr so aus:
+    ```javascript
+    // ...
+    window.onload = function() {
+      // Begin Swagger UI call region
+      const ui = SwaggerUIBundle({
+        url: "https://petstore.swagger.io/v2/swagger.json", // << DIESE ZEILE ÄNDERN
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        plugins: [
+          SwaggerUIBundle.plugins.DownloadUrl
+        ],
+        layout: "StandaloneLayout"
+      });
+      // End Swagger UI call region
+      window.ui = ui;
+    };
+    // ...
+    ```
+    Ändern Sie den Wert von `url` auf den Namen Ihrer lokalen Datei:
+    ```javascript
+    url: "meine-api.yaml", // oder "meine-api.json"
+    ```
+    Speichern Sie die `swagger-initializer.js`.
+
+**Schritt 4: Lokalen Webserver mit `npx http-server` starten**
+
+`npx` führt NPM-Paket-Binärdateien aus, ohne sie global installieren zu müssen. Wir verwenden `http-server` um die statischen Dateien bereitzustellen.
+
+1.  Stellen Sie sicher, dass Sie sich im Verzeichnis `meine-swagger-ui` befinden, das die `index.html` und andere Swagger-UI-Dateien (sowie optional Ihre `meine-api.yaml`) enthält.
+2.  Starten Sie den Server:
     ```bash
-    swagger-ui-dist --url openapi.yaml
+    npx http-server
     ```
-
-    Öffnen Sie dann Ihren Webbrowser und navigieren Sie zu `http://localhost:8080`.
-
-2.  **CMD (Windows):**
-
-    Öffnen Sie die Eingabeaufforderung und führen Sie die folgenden Befehle aus:
-
-    ```cmd
-    npm install -g swagger-ui-dist
+    Dies startet den Server normalerweise auf Port `8080`. Sie sehen eine Ausgabe wie:
     ```
-
-    Erstellen Sie ein Verzeichnis, in dem Sie Ihre OpenAPI-Spezifikationsdatei (`openapi.yaml`) speichern möchten. Navigieren Sie zu diesem Verzeichnis in der Eingabeaufforderung.
-
-    Führen Sie dann den folgenden Befehl aus:
-
-    ```cmd
-    swagger-ui-dist --url openapi.yaml
+    Starting up http-server, serving ./
+    Available on:
+      http://127.0.0.1:8080
+      http://[your-local-ip]:8080
+    Hit CTRL-C to stop the server
     ```
+3.  Öffnen Sie Ihren Webbrowser und navigieren Sie zu `http://127.0.0.1:8080` (oder dem angezeigten Port).
 
-    Öffnen Sie dann Ihren Webbrowser und navigieren Sie zu `http://localhost:8080`.
+**Port konfigurieren:**
 
-3.  **PowerShell (Windows):**
+Um einen anderen Port zu verwenden, nutzen Sie die Option `-p`:
+```bash
+npx http-server -p DEIN_WUNSCHPORT
+# Beispiel für Port 8888:
+npx http-server -p 8888
+```
+Dann wäre Swagger UI unter `http://127.0.0.1:8888` erreichbar.
 
-    Öffnen Sie PowerShell und führen Sie die folgenden Befehle aus:
+**Pfad zur OpenAPI-Spezifikation (URL) anpassen:**
 
-    ```powershell
-    npm install -g swagger-ui-dist
+Es gibt mehrere Wege, die URL zur Spezifikationsdatei anzugeben:
+
+1.  **Wie in Schritt 3 beschrieben:** Direkt in der `swagger-initializer.js` die `url`-Eigenschaft im `SwaggerUIBundle` ändern. Dies ist die robusteste Methode für eine feste lokale Datei.
+2.  **Über einen URL-Parameter:** Wenn Sie die `index.html` nicht ändern möchten, können Sie die URL zur Spezifikation auch als Query-Parameter beim Aufruf im Browser übergeben (vorausgesetzt, Ihre Spezifikationsdatei wird auch vom `http-server` bereitgestellt, d.h. sie liegt im selben Verzeichnis oder einem Unterverzeichnis).
+    Wenn Ihre `meine-api.yaml` im Stammverzeichnis des Servers liegt, rufen Sie auf:
+    `http://127.0.0.1:8080/?url=meine-api.yaml`
+    Wenn sie öffentlich erreichbar ist (z.B. auf GitHub Gist), können Sie auch eine externe URL angeben:
+    `http://127.0.0.1:8080/?url=https://example.com/pfad/zu/deiner/api.yaml`
+3.  **Eingabefeld in Swagger UI:** Standardmäßig zeigt Swagger UI oben ein Eingabefeld an, in das Sie die URL zu Ihrer Spezifikationsdatei eingeben können, nachdem die Seite geladen wurde.
+
+**Hinweise für PowerShell:**
+Die Befehle `mkdir`, `cd`, `npm` und `npx` funktionieren in PowerShell identisch wie in anderen Terminals. Der `Copy-Item`-Befehl wurde oben bereits spezifisch für PowerShell gezeigt.
+
+---
+
+### Methode 2: Verwendung von Docker
+
+Docker ist eine hervorragende Methode, um Swagger UI isoliert und mit minimalem Setup auf Ihrem System auszuführen. Swagger API stellt ein offizielles Docker-Image bereit.
+
+**Schritt 1: Docker-Image herunterladen (optional, passiert automatisch beim ersten `run`)**
+
+```bash
+docker pull swaggerapi/swagger-ui
+```
+
+**Schritt 2: Docker-Container starten**
+
+Der grundlegende Befehl zum Starten ist:
+```bash
+docker run -p HOST_PORT:CONTAINER_PORT swaggerapi/swagger-ui
+```
+Swagger UI im Container lauscht standardmäßig auf Port `8080`.
+
+**Beispiel: Swagger UI auf Port 80 Ihres Host-Systems bereitstellen:**
+```bash
+docker run -d -p 80:8080 swaggerapi/swagger-ui
+```
+* `-d`: Startet den Container im "detached" Modus (im Hintergrund).
+* `-p 80:8080`: Mappt Port `80` Ihres Host-Systems auf Port `8080` im Container. Sie können Swagger UI dann über `http://localhost` (oder `http://localhost:80`) im Browser aufrufen.
+
+**Port konfigurieren:**
+
+Ändern Sie einfach den `HOST_PORT`-Teil im `-p`-Argument:
+```bash
+# Swagger UI auf Host-Port 8888 bereitstellen
+docker run -d -p 8888:8080 swaggerapi/swagger-ui
+```
+Dann ist Swagger UI unter `http://localhost:8888` erreichbar.
+
+**Pfad zur OpenAPI-Spezifikation (URL) anpassen mit Docker:**
+
+Es gibt mehrere Möglichkeiten, Ihre API-Spezifikation dem Docker-Container bekannt zu machen:
+
+1.  **Über die Umgebungsvariable `URL` (für eine einzelne Spezifikation):**
+    Wenn Ihre Spezifikationsdatei online verfügbar ist:
+    ```bash
+    docker run -d -p 80:8080 -e URL="https://petstore.swagger.io/v2/swagger.json" swaggerapi/swagger-ui
     ```
+    Oder wenn Sie eine lokale Datei haben und diese in den Container mounten:
+    Angenommen, Ihre `meine-api.yaml` liegt unter `/pfad/zu/deiner/meine-api.yaml` (Linux/macOS) oder `C:\pfad\zu\deiner\meine-api.yaml` (Windows).
 
-    Erstellen Sie ein Verzeichnis, in dem Sie Ihre OpenAPI-Spezifikationsdatei (`openapi.yaml`) speichern möchten. Navigieren Sie zu diesem Verzeichnis in PowerShell.
+    * **Linux/macOS:**
+        ```bash
+        docker run -d -p 80:8080 \
+            -e URL="/usr/share/nginx/html/meine-api.yaml" \
+            -v /pfad/zu/deiner/meine-api.yaml:/usr/share/nginx/html/meine-api.yaml \
+            swaggerapi/swagger-ui
+        ```
+        Beachten Sie: Der Pfad in `-e URL` muss der Pfad *innerhalb des Containers* sein, wohin Sie die Datei gemountet haben. Der Standard-Webroot im `swaggerapi/swagger-ui` Image ist oft `/usr/share/nginx/html/`.
 
-    Führen Sie dann den folgenden Befehl aus:
+    * **Windows (PowerShell oder CMD):**
+        Achten Sie auf die korrekte Pfadsyntax für Docker Volumes unter Windows.
+        ```powershell
+        # PowerShell (Backticks für Zeilenumbrüche)
+        docker run -d -p 80:8080 `
+            -e URL="/usr/share/nginx/html/meine-api.yaml" `
+            -v C:\pfad\zu\deiner\meine-api.yaml:/usr/share/nginx/html/meine-api.yaml `
+            swaggerapi/swagger-ui
+        ```
+        ```cmd
+        REM Eingabeaufforderung (Backslashes für Zeilenumbrüche, falls unterstützt, sonst alles in einer Zeile)
+        docker run -d -p 80:8080 ^
+            -e URL="/usr/share/nginx/html/meine-api.yaml" ^
+            -v C:\pfad\zu\deiner\meine-api.yaml:/usr/share/nginx/html/meine-api.yaml ^
+            swaggerapi/swagger-ui
+        ```
+        **Wichtig:** Stellen Sie sicher, dass das Laufwerk (z.B. `C:`) in den Docker Desktop-Einstellungen für "File Sharing" freigegeben ist.
 
-    ```powershell
-    swagger-ui-dist --url openapi.yaml
+2.  **Über die Umgebungsvariable `URLS` (für mehrere Spezifikationen mit Dropdown-Auswahl):**
+    Sie können eine kommagetrennte Liste von URLs oder Namen für URLs angeben.
+    ```bash
+    docker run -d -p 80:8080 \
+        -e URLS="[ \
+            { url: 'https://petstore.swagger.io/v2/swagger.json', name: 'Petstore' }, \
+            { url: 'https://petstore3.swagger.io/api/v3/openapi.json', name: 'Petstore v3' } \
+        ]" \
+        swaggerapi/swagger-ui
     ```
+    Wenn Sie lokale Dateien mounten, verwenden Sie die Pfade innerhalb des Containers für die `url`-Eigenschaft.
 
-    Öffnen Sie dann Ihren Webbrowser und navigieren Sie zu `http://localhost:8080`.
+3.  **Eine eigene `swagger-config.json` oder `index.html` mounten:**
+    Sie können eine eigene Konfigurationsdatei oder sogar eine angepasste `index.html` in den Container mounten, um das Standardverhalten zu überschreiben. Dies ist fortgeschrittener und erfordert Kenntnis der Dateistruktur im Docker-Image.
+    * **Eigene `index.html` mounten:**
+        Angenommen, Sie haben eine `meine-index.html` (die auf Ihre lokale Spezifikationsdatei verweist, die ebenfalls gemountet wird oder bereits in der `index.html` fest codiert ist) unter `/pfad/zu/deiner/meine-index.html`.
+        ```bash
+        # Linux/macOS
+        docker run -d -p 80:8080 \
+            -v /pfad/zu/deiner/meine-index.html:/usr/share/nginx/html/index.html \
+            # Optional: auch die Spezifikationsdatei mounten, wenn meine-index.html darauf verweist
+            -v /pfad/zu/deiner/meine-api.yaml:/usr/share/nginx/html/meine-api.yaml \
+            swaggerapi/swagger-ui
+        ```
+        Dadurch wird die Standard-`index.html` im Container durch Ihre eigene ersetzt.
+
+**Hinweise für PowerShell bei Docker:**
+Docker-Befehle sind plattformübergreifend. Die Hauptunterschiede liegen in der Pfadangabe für Volumes (`-v`) und der Verwendung von Escape-Zeichen für Zeilenumbrüche (PowerShell: Backtick ``` ` ```, CMD: Caret `^`).
+
+---
+
+**Zusammenfassung:**
+
+* **NPM/NPX:** Gut für schnelle, unkomplizierte Setups, wenn Sie bereits Node.js verwenden und Flexibilität bei der Anpassung der `index.html` wünschen. Ideal für die Integration in Frontend-Projekte.
+* **Docker:** Exzellent für isolierte Umgebungen, einfache Portabilität und wenn Sie Node.js nicht direkt auf Ihrem System installieren möchten oder eine konsistente Umgebung über verschiedene Systeme hinweg benötigen. Die Konfiguration über Umgebungsvariablen ist sehr praktisch.
+
+Wählen Sie die Methode, die am besten zu Ihrem Workflow und Ihren Anforderungen passt!
 
 ## Öffnen der OpenAPI Spezifikation in Swagger UI
 
